@@ -1,0 +1,472 @@
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="description" content="Vyshnavi Sudhakar — Associate Product Manager candidate with experience in incident management, product thinking, and AI prototyping." />
+  <title>Vyshnavi Sudhakar — Product & AI</title>
+  <style>
+    :root {
+      --paper: #f7f6f2;
+      --surface: #ffffff;
+      --ink: #18211f;
+      --muted: #66716d;
+      --line: #e4e6df;
+      --accent: #6558d3;
+      --accent-dark: #4b40b2;
+      --accent-soft: #eceaff;
+      --mint: #dcefe6;
+      --dark: #172522;
+      --radius: 22px;
+      --shadow: 0 18px 50px rgba(25, 38, 33, .07);
+      --max: 1160px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    a:focus-visible, button:focus-visible { outline: 3px solid #938bf0; outline-offset: 4px; }
+    .wrap { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
+    .nav-shell {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(247, 246, 242, .88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(228, 230, 223, .8);
+    }
+    nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; font-weight: 750; letter-spacing: -.04em; }
+    .brand-mark {
+      width: 36px; height: 36px; display: grid; place-items: center; border-radius: 12px;
+      background: var(--dark); color: white; font-size: 13px; letter-spacing: -.05em;
+    }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { font-size: 13px; text-decoration: none; color: var(--muted); font-weight: 650; transition: color .2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links .nav-cta { background: var(--ink); color: white; padding: 11px 16px; border-radius: 999px; }
+    .nav-cta:hover { background: var(--accent) !important; color: white !important; }
+    .menu-toggle { display: none; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 9px 12px; font: inherit; cursor: pointer; }
+    .hero { padding: 82px 0 64px; }
+    .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 64px; align-items: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--accent-dark); font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #52a57e; box-shadow: 0 0 0 4px #dcefe6; }
+    h1 { margin: 20px 0 22px; font-size: clamp(44px, 6vw, 76px); line-height: .99; letter-spacing: -.075em; font-weight: 780; max-width: 760px; }
+    h1 .accent { color: var(--accent); }
+    .hero-copy { max-width: 630px; color: #58635f; font-size: 17px; line-height: 1.8; }
+    .hero-copy strong { color: var(--ink); font-weight: 700; }
+    .hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 48px; padding: 0 19px; border-radius: 999px; text-decoration: none; font-size: 13px; font-weight: 750; border: 1px solid transparent; transition: transform .2s, background .2s, border-color .2s; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { color: white; background: var(--accent); box-shadow: 0 8px 20px rgba(101, 88, 211, .2); }
+    .btn-primary:hover { background: var(--accent-dark); }
+    .btn-secondary { border-color: #d8dbd3; background: rgba(255,255,255,.55); }
+    .btn-secondary:hover { border-color: #a9a4e7; background: white; }
+    .arrow { font-size: 16px; line-height: 1; }
+    .hero-visual { min-height: 390px; position: relative; display: grid; place-items: center; }
+    .orbit { width: min(100%, 390px); aspect-ratio: 1; border: 1px solid #dedfd7; border-radius: 50%; position: relative; display: grid; place-items: center; }
+    .orbit:before, .orbit:after { content: ""; position: absolute; border: 1px solid #e4e3dc; border-radius: 50%; }
+    .orbit:before { inset: 12%; }
+    .orbit:after { inset: 25%; }
+    .core-card {
+      position: relative; z-index: 1; width: 194px; padding: 23px 20px; border-radius: 25px;
+      background: var(--dark); color: white; box-shadow: 0 22px 48px rgba(23,37,34,.2); transform: rotate(-4deg);
+    }
+    .core-card .mini-label { color: #aebeb7; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; }
+    .core-card h2 { font-size: 24px; line-height: 1.08; letter-spacing: -.055em; margin: 12px 0 16px; }
+    .core-card p { margin: 0; font-size: 11px; color: #d0dbd5; }
+    .orbit-tag {
+      position: absolute; z-index: 2; padding: 10px 13px; border: 1px solid #e5e5de;
+      background: rgba(255,255,255,.94); border-radius: 13px; box-shadow: 0 10px 24px rgba(30,40,35,.06);
+      font-size: 11px; font-weight: 750; display: flex; align-items: center; gap: 8px; white-space: nowrap;
+    }
+    .orbit-tag span { display: inline-grid; place-items: center; width: 25px; height: 25px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); font-size: 12px; }
+    .tag-one { top: 12%; left: 0; }
+    .tag-two { right: -2%; top: 32%; }
+    .tag-three { bottom: 12%; left: 4%; }
+    .tag-four { bottom: 9%; right: 2%; }
+    .proof-strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .proof-inner { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .proof-item { padding: 24px 20px; border-right: 1px solid var(--line); }
+    .proof-item:first-child { padding-left: 0; }
+    .proof-item:last-child { border-right: 0; }
+    .proof-item strong { display: block; font-size: 21px; letter-spacing: -.05em; }
+    .proof-item span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
+    section { padding: 92px 0; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 34px; }
+    .section-kicker { color: var(--accent); font-size: 11px; font-weight: 850; letter-spacing: .14em; text-transform: uppercase; }
+    h2.section-title { margin: 9px 0 0; font-size: clamp(32px, 4vw, 47px); line-height: 1.05; letter-spacing: -.065em; }
+    .section-intro { max-width: 410px; color: var(--muted); font-size: 14px; margin: 0; }
+    .project-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 20px; }
+    .project-card { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
+    .project-art { min-height: 250px; position: relative; overflow: hidden; padding: 28px; display: flex; align-items: center; justify-content: center; }
+    .project-art.ai { background: #e9e7ff; }
+    .project-art.netflix { background: #f4e7df; }
+    .app-window { position: relative; width: min(100%, 390px); background: rgba(255,255,255,.92); border: 1px solid rgba(37,35,73,.1); border-radius: 17px; padding: 15px; box-shadow: 0 18px 40px rgba(54,45,102,.12); transform: rotate(-2deg); }
+    .window-bar { display: flex; gap: 5px; padding-bottom: 12px; border-bottom: 1px solid #efedf5; }
+    .window-bar i { display: block; width: 6px; height: 6px; background: #d7d3e6; border-radius: 50%; }
+    .app-top { display: flex; justify-content: space-between; align-items: center; margin: 13px 0; font-size: 10px; font-weight: 800; }
+    .app-pill { background: #e8e4ff; color: #594dc5; border-radius: 99px; padding: 5px 8px; font-size: 8px; }
+    .chat { display: flex; gap: 9px; align-items: flex-start; margin: 10px 0; }
+    .chat-icon { flex: 0 0 25px; height: 25px; border-radius: 9px; background: #e0f0e6; display: grid; place-items: center; font-size: 12px; }
+    .chat-bubble { padding: 9px 11px; border-radius: 4px 11px 11px 11px; background: #f4f3f9; color: #50515d; font-size: 9px; line-height: 1.5; }
+    .chat.user { justify-content: flex-end; }
+    .chat.user .chat-bubble { background: #e6e2ff; border-radius: 11px 4px 11px 11px; }
+    .case-ui { width: min(100%, 320px); position: relative; transform: rotate(3deg); }
+    .case-ui .screen { padding: 20px; background: #1c1c22; color: white; border-radius: 14px; box-shadow: 0 18px 40px rgba(75,46,33,.2); }
+    .screen small { color: #f4a58b; text-transform: uppercase; letter-spacing: .15em; font-weight: 800; font-size: 8px; }
+    .screen h3 { font-size: 24px; line-height: 1.1; letter-spacing: -.05em; margin: 10px 0 16px; }
+    .screen-bars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+    .screen-bars span { height: 53px; border-radius: 7px; background: linear-gradient(145deg, #55464b, #b35b45); }
+    .screen-bars span:nth-child(2) { background: linear-gradient(145deg, #443d4e, #7e6ba5); }
+    .screen-bars span:nth-child(3) { background: linear-gradient(145deg, #5b463c, #d49a68); }
+    .project-content { padding: 27px 28px 30px; }
+    .project-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .project-index { color: var(--accent); }
+    .project-content h3 { font-size: 25px; letter-spacing: -.055em; margin: 12px 0 9px; line-height: 1.15; }
+    .project-content p { color: var(--muted); font-size: 13px; line-height: 1.75; margin: 0 0 18px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 7px; }
+    .tags span { padding: 6px 9px; border-radius: 7px; background: #f1f1ed; color: #4d5853; font-size: 10px; font-weight: 700; }
+    .experience-section { background: #f0f0ea; }
+    .experience-layout { display: grid; grid-template-columns: .7fr 1.3fr; gap: 70px; align-items: start; }
+    .experience-aside { position: sticky; top: 110px; }
+    .experience-aside p { color: var(--muted); font-size: 14px; max-width: 300px; margin: 18px 0 24px; }
+    .skill-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+    .skill-cloud span { border: 1px solid #d9ddd4; background: rgba(255,255,255,.65); padding: 8px 10px; border-radius: 9px; font-size: 11px; font-weight: 700; }
+    .timeline { border-left: 1px solid #d4d8cf; padding-left: 27px; }
+    .role { position: relative; padding: 0 0 34px; }
+    .role:last-child { padding-bottom: 0; }
+    .role:before { content: ""; position: absolute; width: 9px; height: 9px; border: 3px solid #f0f0ea; background: var(--accent); border-radius: 50%; left: -33px; top: 5px; box-shadow: 0 0 0 1px var(--accent); }
+    .role-top { display: flex; justify-content: space-between; gap: 20px; align-items: start; }
+    .role h3 { margin: 0; font-size: 19px; letter-spacing: -.04em; }
+    .role .title { font-size: 12px; color: var(--accent-dark); font-weight: 750; margin-top: 3px; }
+    .role time { white-space: nowrap; color: var(--muted); font-size: 11px; padding-top: 5px; }
+    .role ul { padding-left: 17px; margin: 13px 0 0; color: #5c6762; font-size: 12px; }
+    .role li { margin: 6px 0; padding-left: 2px; }
+    .role li::marker { color: #9992e5; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .info-card { padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    .info-icon { display: grid; place-items: center; width: 42px; height: 42px; background: var(--accent-soft); color: var(--accent); border-radius: 13px; font-size: 18px; margin-bottom: 19px; }
+    .info-card h3 { margin: 0 0 8px; font-size: 19px; letter-spacing: -.04em; }
+    .info-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.75; }
+    .education-note { margin-top: 20px; display: flex; justify-content: space-between; gap: 20px; padding: 18px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .education-note strong { color: var(--ink); }
+    .contact { padding: 0 0 70px; }
+    .contact-panel { position: relative; overflow: hidden; background: var(--dark); color: white; border-radius: 28px; padding: 54px; display: flex; justify-content: space-between; align-items: center; gap: 35px; }
+    .contact-panel:after { content: ""; position: absolute; width: 340px; height: 340px; border: 1px solid rgba(255,255,255,.1); border-radius: 50%; right: 7%; top: -190px; box-shadow: 0 0 0 35px rgba(255,255,255,.025), 0 0 0 75px rgba(255,255,255,.02); pointer-events: none; }
+    .contact-copy { position: relative; z-index: 1; max-width: 600px; }
+    .contact-copy .section-kicker { color: #b8b2ff; }
+    .contact-copy h2 { font-size: clamp(32px, 4vw, 48px); letter-spacing: -.065em; line-height: 1.05; margin: 12px 0; }
+    .contact-copy p { color: #c2cec8; font-size: 14px; margin: 0; }
+    .contact-actions { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px; min-width: 180px; }
+    .contact-actions .btn-primary { background: white; color: var(--dark); box-shadow: none; }
+    .contact-actions .btn-primary:hover { background: var(--accent-soft); }
+    .contact-actions .btn-secondary { color: white; border-color: #52615b; background: transparent; }
+    footer { padding: 0 0 28px; color: var(--muted); font-size: 11px; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 15px; border-top: 1px solid var(--line); padding-top: 20px; }
+    .footer-links { display: flex; gap: 18px; }
+    .footer-links a { text-decoration: none; }
+    .footer-links a:hover { color: var(--accent); }
+    @media (max-width: 850px) {
+      .hero { padding-top: 58px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 25px; }
+      .hero-visual { min-height: 330px; }
+      .orbit { width: 320px; }
+      .tag-one { left: 5%; }
+      .tag-two { right: 3%; }
+      .tag-three { left: 7%; }
+      .tag-four { right: 4%; }
+      .project-grid { grid-template-columns: 1fr; }
+      .experience-layout { grid-template-columns: 1fr; gap: 38px; }
+      .experience-aside { position: static; }
+      .section-head { align-items: start; flex-direction: column; gap: 15px; }
+      .contact-panel { padding: 38px; }
+    }
+    @media (max-width: 600px) {
+      .wrap { width: min(100% - 32px, var(--max)); }
+      nav { min-height: 68px; }
+      .menu-toggle { display: block; }
+      .nav-links { display: none; position: absolute; left: 16px; right: 16px; top: 60px; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow); flex-direction: column; align-items: stretch; gap: 0; }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 12px 10px; }
+      .nav-links .nav-cta { text-align: center; margin-top: 5px; }
+      .hero { padding: 48px 0 44px; }
+      h1 { font-size: clamp(42px, 13vw, 61px); }
+      .hero-copy { font-size: 15px; }
+      .hero-visual { min-height: 285px; }
+      .orbit { width: 260px; }
+      .core-card { width: 150px; padding: 17px; border-radius: 20px; }
+      .core-card h2 { font-size: 20px; }
+      .orbit-tag { font-size: 9px; padding: 7px 9px; }
+      .orbit-tag span { width: 21px; height: 21px; }
+      .tag-one { left: -1%; top: 8%; }
+      .tag-two { right: -3%; top: 28%; }
+      .tag-three { left: -1%; bottom: 8%; }
+      .tag-four { right: -2%; bottom: 7%; }
+      .proof-inner { grid-template-columns: repeat(2, 1fr); }
+      .proof-item { padding: 17px 12px; border-bottom: 1px solid var(--line); }
+      .proof-item:first-child { padding-left: 12px; }
+      .proof-item:nth-child(2) { border-right: 0; }
+      .proof-item:nth-child(3), .proof-item:nth-child(4) { border-bottom: 0; }
+      section { padding: 65px 0; }
+      .project-art { min-height: 220px; padding: 20px; }
+      .project-content { padding: 22px; }
+      .role-top { flex-direction: column; gap: 3px; }
+      .role time { padding-top: 0; }
+      .about-grid { grid-template-columns: 1fr; }
+      .education-note { flex-direction: column; gap: 4px; }
+      .contact { padding-bottom: 45px; }
+      .contact-panel { padding: 30px 24px; flex-direction: column; align-items: stretch; }
+      .contact-actions { min-width: 0; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-shell">
+    <nav class="wrap" aria-label="Main navigation">
+      <a class="brand" href="#home" aria-label="Vyshnavi Sudhakar home">
+        <span class="brand-mark">VS</span><span>Vyshnavi Sudhakar</span>
+      </a>
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navLinks">Menu ☰</button>
+      <div class="nav-links" id="navLinks">
+        <a href="#work">Selected work</a>
+        <a href="#experience">Experience</a>
+        <a href="#about">About</a>
+        <a class="nav-cta" href="#contact">Let's connect ↗</a>
+      </div>
+    </nav>
+  </div>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> Open to Associate Product Manager roles</div>
+          <h1>Turning complex problems into <span class="accent">better products.</span></h1>
+          <p class="hero-copy">
+            I'm <strong>Vyshnavi Sudhakar</strong> — an aspiring product manager bringing 6+ years of IT support and major incident management experience into product building. I connect user needs, technical teams, and practical solutions, with a growing focus on AI-powered experiences.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#work">Explore my work <span class="arrow">↘</span></a>
+            <a class="btn btn-secondary" href="mailto:vyshnavisudhakar@gmail.com">Email me <span class="arrow">↗</span></a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Visual summary of product management, AI, and problem solving">
+          <div class="orbit">
+            <div class="core-card">
+              <div class="mini-label">My approach</div>
+              <h2>Listen.<br>Understand.<br>Build.</h2>
+              <p>From incident response to product impact.</p>
+            </div>
+            <div class="orbit-tag tag-one"><span>◎</span> User empathy</div>
+            <div class="orbit-tag tag-two"><span>✳</span> AI & prototyping</div>
+            <div class="orbit-tag tag-three"><span>↗</span> Root-cause thinking</div>
+            <div class="orbit-tag tag-four"><span>⌘</span> Team alignment</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="proof-strip" aria-label="Experience highlights">
+      <div class="wrap proof-inner">
+        <div class="proof-item"><strong>6+ years</strong><span>IT support & incident management</span></div>
+        <div class="proof-item"><strong>40 calls/day</strong><span>Handled at Goldman Sachs</span></div>
+        <div class="proof-item"><strong>60% first-call</strong><span>Resolution rate in support roles</span></div>
+        <div class="proof-item"><strong>Google Cloud</strong><span>MomVoice AI deployed</span></div>
+      </div>
+    </div>
+
+    <section id="work">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Selected work</div>
+            <h2 class="section-title">Product thinking,<br>put into practice.</h2>
+          </div>
+          <p class="section-intro">A mix of hands-on AI product building and structured product-management work — focused on understanding a problem and shaping a useful solution.</p>
+        </div>
+        <div class="project-grid">
+          <article class="project-card">
+            <div class="project-art ai" aria-hidden="true">
+              <div class="app-window">
+                <div class="window-bar"><i></i><i></i><i></i></div>
+                <div class="app-top"><span>MomVoice AI</span><span class="app-pill">AI companion</span></div>
+                <div class="chat"><div class="chat-icon">✦</div><div class="chat-bubble">A little support for the big, new journey of parenthood.</div></div>
+                <div class="chat user"><div class="chat-bubble">I'm figuring things out one day at a time.</div></div>
+                <div class="chat"><div class="chat-icon">♡</div><div class="chat-bubble">You're learning as you go. Let's take it one step at a time.</div></div>
+              </div>
+            </div>
+            <div class="project-content">
+              <div class="project-meta"><span>AI product · Independent project</span><span class="project-index">01 / 02</span></div>
+              <h3>MomVoice AI</h3>
+              <p>Scoped, built, and deployed an AI companion for new parents on Google Cloud. This project reflects my interest in using AI to create supportive, human-centered experiences.</p>
+              <div class="tags"><span>Product scoping</span><span>AI</span><span>Google Cloud</span><span>Deployment</span></div>
+            </div>
+          </article>
+          <article class="project-card">
+            <div class="project-art netflix" aria-hidden="true">
+              <div class="case-ui">
+                <div class="screen">
+                  <small>Product case study</small>
+                  <h3>Netflix<br>Product thinking</h3>
+                  <div class="screen-bars"><span></span><span></span><span></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="project-content">
+              <div class="project-meta"><span>Product management · Certification</span><span class="project-index">02 / 02</span></div>
+              <h3>Netflix case study</h3>
+              <p>Worked through a product-management certification case study, taking the work from user research to a product requirements document (PRD) and prototype.</p>
+              <div class="tags"><span>User research</span><span>PRD</span><span>Prototyping</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="experience-section" id="experience">
+      <div class="wrap experience-layout">
+        <aside class="experience-aside">
+          <div class="section-kicker">Experience</div>
+          <h2 class="section-title">A foundation in<br>solving real problems.</h2>
+          <p>My support and incident-management background taught me to investigate root causes, communicate clearly under pressure, and coordinate teams toward resolution — skills I bring to product work.</p>
+          <div class="skill-cloud" aria-label="Core skills">
+            <span>Prompt engineering</span><span>Google Cloud Platform</span><span>Rapid prototyping</span><span>Incident management</span><span>Root-cause analysis</span><span>Cross-team coordination</span>
+          </div>
+        </aside>
+        <div class="timeline">
+          <article class="role">
+            <div class="role-top">
+              <div><h3>Softtek</h3><div class="title">Senior Support Engineer</div></div>
+              <time>Apr 2022 – Jun 2023</time>
+            </div>
+            <ul>
+              <li>Served as primary point of contact for major incidents, coordinating Change and Problem Management teams to restore service and minimize business impact.</li>
+              <li>Led post-incident reviews, identified root causes, and coordinated follow-up actions.</li>
+              <li>Drove closure of backlog incidents across technical teams and tracked productivity metrics in daily and monthly reporting.</li>
+            </ul>
+          </article>
+          <article class="role">
+            <div class="role-top">
+              <div><h3>Goldman Sachs</h3><div class="title">Windows System Administrator</div></div>
+              <time>May 2019 – Nov 2020</time>
+            </div>
+            <ul>
+              <li>Supported major incidents in a complex banking environment alongside Change and Problem Management teams.</li>
+              <li>Investigated user issues across chat, email, and phone; handled about 40 calls per day and resolved 60% on the first call.</li>
+              <li>Managed user and system accounts and peripheral devices using Active Directory.</li>
+            </ul>
+          </article>
+          <article class="role">
+            <div class="role-top">
+              <div><h3>CGI</h3><div class="title">System Administrator</div></div>
+              <time>Feb 2016 – May 2019</time>
+            </div>
+            <ul>
+              <li>Contributed to an internal knowledge base for resolving common support issues and reduced call volume through end-user education.</li>
+              <li>Handled about 25 inbound calls per day, resolved 60% on the first call, and troubleshot LAN/WAN/VPN connectivity.</li>
+            </ul>
+          </article>
+          <article class="role">
+            <div class="role-top">
+              <div><h3>Concentrix Daksh Services India Pvt. Ltd.</h3><div class="title">Practitioner, CRM Operations</div></div>
+              <time>Jul 2015 – Dec 2015</time>
+            </div>
+            <ul>
+              <li>Provided phone-based technical support to internal employees, analyzing incidents to identify root causes and implement solutions.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Beyond the job titles</div>
+            <h2 class="section-title">Curious by nature.<br>Practical by design.</h2>
+          </div>
+          <p class="section-intro">I’m interested in the space where user needs, technology, and clear product decisions meet.</p>
+        </div>
+        <div class="about-grid">
+          <article class="info-card">
+            <div class="info-icon" aria-hidden="true">✳</div>
+            <h3>AI & experimentation</h3>
+            <p>Built and deployed MomVoice AI on Google Cloud, and earned the Prompt Design in Vertex AI Skill Badge. I enjoy exploring how emerging tools can address real user needs.</p>
+          </article>
+          <article class="info-card">
+            <div class="info-icon" aria-hidden="true">◎</div>
+            <h3>From incidents to insights</h3>
+            <p>Incident management sharpened my ability to listen to users, separate symptoms from root causes, communicate across teams, and follow through on solutions.</p>
+          </article>
+        </div>
+        <div class="education-note">
+          <span><strong>Education</strong> · Shirdi Sai Engineering College</span>
+          <span>2010–2014</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="wrap">
+        <div class="contact-panel">
+          <div class="contact-copy">
+            <div class="section-kicker">Next chapter</div>
+            <h2>Let’s build something<br>that makes a difference.</h2>
+            <p>Open to Associate Product Manager opportunities, remote or in the New Jersey / New York City area.</p>
+          </div>
+          <div class="contact-actions">
+            <a class="btn btn-primary" href="mailto:vyshnavisudhakar@gmail.com">Get in touch <span class="arrow">↗</span></a>
+            <a class="btn btn-secondary" href="https://www.linkedin.com/in/vyshnavisudhakar" target="_blank" rel="noopener noreferrer">Connect on LinkedIn <span class="arrow">↗</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>© <span id="year"></span> Vyshnavi Sudhakar · Product & AI</span>
+      <div class="footer-links">
+        <a href="mailto:vyshnavisudhakar@gmail.com">Email</a>
+        <a href="https://www.linkedin.com/in/vyshnavisudhakar" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+        <a href="#home">Back to top ↑</a>
+      </div>
+    </div>
+  </footer>
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    menuToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      menuToggle.textContent = isOpen ? 'Close ×' : 'Menu ☰';
+    });
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.textContent = 'Menu ☰';
+      });
+    });
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
+'''
+path = Path("/mnt/data/vyshnavi-portfolio.html")
+path.write_text(html, encoding="utf-8")
+print(f"Created {path} ({path.stat().st_size:,} bytes)")
