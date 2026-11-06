@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAG Simulator</title>
+<style>
+:root{
+  --bg:#f3f5f9; --panel:#ffffff; --ink:#16202e; --muted:#5d6b7f; --line:#dbe1ea;
+  --blue:#2b5cff; --teal:#0e9f8e; --amber:#d98a00; --rose:#d8456b; --code:#eef1f7;
+  --font:"Avenir Next","Segoe UI",system-ui,sans-serif; --mono:ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0f1520; --panel:#171f2d; --ink:#e6ebf4; --muted:#93a1b8; --line:#2a3548; --blue:#6e92ff; --teal:#35c9b6; --amber:#f0b03a; --rose:#ff7a9c; --code:#0f1622;}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:28px 18px 60px}
+h1{font-size:2rem;margin:0 0 4px;letter-spacing:-.02em}
+.sub{color:var(--muted);margin:0 0 22px;max-width:62ch}
+.flow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.pill{flex:1 1 150px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-size:.85rem;color:var(--muted);transition:.25s}
+.pill b{display:block;color:var(--ink);font-size:.9rem}
+.pill.on{border-color:var(--blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 22%,transparent);color:var(--ink)}
+.pill.done{border-color:var(--teal)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.card h2{margin:0 0 4px;font-size:1.1rem}
+.card .why{margin:0 0 14px;color:var(--muted);font-size:.9rem;max-width:70ch}
+.badge{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:99px;margin-left:8px;vertical-align:middle;font-weight:600}
+.b1{background:color-mix(in srgb,var(--amber) 20%,transparent);color:var(--amber)}
+.b2{background:color-mix(in srgb,var(--blue) 18%,transparent);color:var(--blue)}
+textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--code);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{min-height:150px;resize:vertical;font-size:.88rem}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:12px}
+.ctrl label{font-size:.82rem;color:var(--muted);display:block}
+.ctrl label span{color:var(--ink);font-weight:600}
+.ctrl input[type=range],.ctrl select{width:100%;margin-top:4px;font:inherit}
+.ctrl select{padding:6px;border-radius:8px;background:var(--code);color:var(--ink);border:1px solid var(--line)}
+button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:10px 18px;background:var(--blue);color:#fff;cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.ask{display:flex;gap:10px;flex-wrap:wrap}.ask input{flex:1 1 260px}
+.chunks{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.chunk{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--code);font-size:.82rem}
+.chunk h4{margin:0 0 5px;font-size:.8rem;color:var(--blue)}
+.chunk p{margin:0 0 8px;color:var(--muted);max-height:4.6em;overflow:hidden}
+.vec{display:flex;align-items:center;gap:1px;height:34px}
+.vec i{flex:1;background:var(--teal);border-radius:1px;min-height:2px}
+.vec i.neg{background:var(--rose)}
+.note{font-size:.8rem;color:var(--muted);margin-top:8px}
+.row{display:grid;grid-template-columns:34px 1fr 150px;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:.85rem;align-items:start}
+.row:first-child{border-top:0}
+.rank{font-weight:700;font-size:1.1rem;color:var(--blue)}
+.row.cut{opacity:.45}
+.bar{height:6px;border-radius:4px;background:var(--line);margin:3px 0 6px;overflow:hidden}
+.bar div{height:100%}
+.sc{font-size:.72rem;color:var(--muted)}
+pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:12px;white-space:pre-wrap;font:.78rem/1.55 var(--mono);margin:0;max-height:300px;overflow:auto}
+.answer{border-left:4px solid var(--teal);background:color-mix(in srgb,var(--teal) 10%,transparent);padding:12px 14px;border-radius:0 10px 10px 0;margin-top:12px}
+.hidden{display:none}
+.move{font-size:.75rem;margin-left:4px}
+@media (max-width:560px){.row{grid-template-columns:28px 1fr}.row .scores{grid-column:2}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>RAG simulator</h1>
+  <p class="sub">Edit the knowledge base, ask a question, and watch each step of retrieval-augmented generation run. Embeddings and the answer are simulated in your browser, so no AI model or internet is needed.</p>
+
+  <div class="flow" id="flow">
+    <div class="pill" data-s="1"><b>1. Chunk</b>Split the data</div>
+    <div class="pill" data-s="2"><b>2. Embed</b>Text to vectors</div>
+    <div class="pill" data-s="3"><b>3. Query</b>Embed the question</div>
+    <div class="pill" data-s="4"><b>4. Retrieve</b>Search and rerank</div>
+    <div class="pill" data-s="5"><b>5. Generate</b>Augmented prompt</div>
+  </div>
+
+  <section class="card">
+    <h2>Step 1: Chunk the data <span class="badge b1">Indexing</span></h2>
+    <p class="why">An LLM cannot read your whole database at once, so the text is cut into small chunks. Small chunks are precise but lose context. Large chunks keep context but add noise.</p>
+    <textarea id="kb" aria-label="Knowledge base"></textarea>
+    <div class="ctrl">
+      <label>Chunk size: <span id="csV">25</span> words<input type="range" id="cs" min="10" max="60" value="25"></label>
+      <label>Overlap: <span id="ovV">5</span> words<input type="range" id="ov" min="0" max="15" value="5"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Step 2: Create vector embeddings <span class="badge b1">Indexing</span></h2>
+    <p class="why">Each chunk becomes a list of numbers (a vector) that captures its meaning. Similar meanings give similar vectors. Real models use hundreds of numbers. This demo uses 32, shown as bars.</p>
+    <div class="chunks" id="chunks"></div>
+    <p class="note" id="idxNote"></p>
+  </section>
+
+  <section class="card">
+    <h2>Step 3: Ask a question <span class="badge b2">Querying</span></h2>
+    <p class="why">Your question is embedded with the same method, so it can be compared with the chunks.</p>
+    <div class="ask">
+      <input type="text" id="q" value="How long do I have to return an item and get my money back?" aria-label="Your question">
+      <button id="run">Run RAG</button>
+    </div>
+    <div class="vec" id="qvec" style="margin-top:12px"></div>
+  </section>
+
+  <section class="card">
+    <h2>Step 4: Retrieve the top matches <span class="badge b2">Querying</span></h2>
+    <p class="why">Vector search finds chunks with similar meaning. Text (keyword) search finds exact word matches. Hybrid search blends both. Reranking then re-scores the top results.</p>
+    <div class="ctrl">
+      <label>Search type
+        <select id="mode"><option value="hybrid">Hybrid (vector + text)</option><option value="vector">Vector only</option><option value="text">Text only</option></select>
+      </label>
+      <label>Top N chunks: <span id="nV">3</span><input type="range" id="n" min="1" max="6" value="3"></label>
+      <label>Reranking
+        <select id="rr"><option value="off">Off</option><option value="on">On</option></select>
+      </label>
+    </div>
+    <div id="results" style="margin-top:10px"><p class="note">Press Run RAG to see results.</p></div>
+  </section>
+
+  <section class="card">
+    <h2>Step 5: Augmented prompt and answer <span class="badge b2">Querying</span></h2>
+    <p class="why">The retrieved chunks are added to your question with instructions. The LLM answers only from that context, which reduces made-up answers.</p>
+    <pre id="prompt">Press Run RAG to build the prompt.</pre>
+    <div class="answer hidden" id="answer"></div>
+  </section>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const DEFAULT_KB = `Returns: You can return any unused item within 30 days of delivery. Refunds go back to your original payment method within 5 business days after we receive the item.
+Shipping: Standard delivery takes 3 to 5 business days. Express shipping takes 1 to 2 business days and costs 12 dollars. Orders over 50 dollars ship free.
+Support: Our support team is available Monday to Friday, 9am to 6pm Eastern. You can reach us by chat or email, and we reply within 24 hours.
+Warranty: All electronics include a one year warranty that covers manufacturing defects. Damage from drops or water is not covered.
+Account: To reset your password, click Forgot password on the login page. A reset link is emailed to you and expires after 1 hour.`;
+$('kb').value = DEFAULT_KB;
+
+const STOP = new Set("a an the is are was were be to of in on at for and or do does did i my me we our you your it its can will with from by that this as how what when where which who much many long have has get".split(" "));
+const SYN = {refund:'money',return:'money',reimburse:'money',cost:'price',costs:'price',pay:'price',payment:'price',deliver:'ship',delivery:'ship',shipping:'ship',shipped:'ship',days:'time',day:'time',hours:'time',hour:'time',business:'time',contact:'support',help:'support',reach:'support',chat:'support',email:'support',guarantee:'warranty',defect:'warranty',broken:'warranty',login:'password',reset:'password',forgot:'password'};
+const DIM = 32;
+
+const stem = t => t.length > 4 ? t.replace(/(ing|ed|es|s)$/,'') : t;
+const tokens = s => (s.toLowerCase().match(/[a-z0-9]+/g) || []).filter(t => !STOP.has(t)).map(stem);
+const canon = t => SYN[t] || t;
+function hash(s){let h=5381;for(const c of s)h=((h<<5)+h+c.charCodeAt(0))>>>0;return h}
+
+let chunks = [], vecs = [], idf = {}, df = {};
+
+function makeChunks(){
+  const words = $('kb').value.trim().split(/\s+/).filter(Boolean);
+  const size = +$('cs').value, ov = Math.min(+$('ov').value, size - 1), out = [];
+  for(let i = 0; i < words.length; i += size - ov){
+    out.push(words.slice(i, i + size).join(' '));
+    if(i + size >= words.length) break;
+  }
+  return out;
+}
+function embed(text){
+  const v = new Array(DIM).fill(0);
+  for(const t of tokens(text)){
+    const c = canon(t), w = idf[c] || 1.5;
+    v[hash(c) % DIM] += w * (hash(c + '#') % 2 ? 1 : -1);
+  }
+  const n = Math.sqrt(v.reduce((a,b)=>a+b*b,0)) || 1;
+  return v.map(x => x / n);
+}
+const cos = (a,b) => Math.max(0, a.reduce((s,x,i)=>s+x*b[i],0));
+function vecHTML(v){
+  const m = Math.max(...v.map(Math.abs)) || 1;
+  return v.map(x => `<i class="${x<0?'neg':''}" style="height:${Math.max(6,Math.abs(x)/m*100)}%"></i>`).join('');
+}
+const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function index(){
+  chunks = makeChunks();
+  df = {};
+  chunks.forEach(c => new Set(tokens(c).map(canon)).forEach(t => df[t] = (df[t]||0) + 1));
+  idf = {};
+  for(const t in df) idf[t] = Math.log(1 + chunks.length / df[t]);
+  vecs = chunks.map(embed);
+  $('chunks').innerHTML = chunks.map((c,i) =>
+    `<div class="chunk"><h4>Chunk ${i+1}</h4><p>${esc(c)}</p><div class="vec" title="Embedding vector">${vecHTML(vecs[i])}</div></div>`).join('');
+  $('idxNote').textContent = `${chunks.length} chunks, each stored as a ${DIM}-number vector. Green bars are positive values, red are negative.`;
+  $('csV').textContent = $('cs').value; $('ovV').textContent = $('ov').value;
+}
+
+function step(n, state){
+  document.querySelectorAll('.pill').forEach(p => {
+    const s = +p.dataset.s;
+    p.classList.toggle('on', s === n && state !== 'end');
+    p.classList.toggle('done', s < n || state === 'end');
+  });
+}
+
+function keywordScores(q){
+  const qt = [...new Set(tokens(q))];
+  const raw = chunks.map(c => {
+    const ct = tokens(c);
+    return qt.reduce((s,t) => {
+      const tf = ct.filter(x => x === t).length;
+      return s + (tf ? (idf[canon(t)] || 1) * tf / (tf + 1) : 0);
+    }, 0);
+  });
+  const m = Math.max(...raw) || 1;
+  return raw.map(x => x / m);
+}
+function coverage(q, c){
+  const qs = [...new Set(tokens(q).map(canon))], cs = new Set(tokens(c).map(canon));
+  return qs.length ? qs.filter(t => cs.has(t)).length / qs.length : 0;
+}
+
+let timers = [];
+function run(){
+  timers.forEach(clearTimeout); timers = [];
+  const q = $('q').value.trim();
+  if(!q || !chunks.length) return;
+  const later = (ms, fn) => timers.push(setTimeout(fn, ms));
+
+  step(3);
+  const qv = embed(q);
+  $('qvec').innerHTML = vecHTML(qv);
+  $('results').innerHTML = '<p class="note">Searching...</p>';
+  $('prompt').textContent = 'Waiting for retrieval...';
+  $('answer').classList.add('hidden');
+
+  later(700, () => {
+    step(4);
+    const mode = $('mode').value, N = +$('n').value, rerank = $('rr').value === 'on';
+    const vs = vecs.map(v => cos(qv, v)), ks = keywordScores(q);
+    const vmax = Math.max(...vs) || 1;
+    const rows = chunks.map((c,i) => {
+      const v = vs[i] / vmax, k = ks[i];
+      const base = mode === 'vector' ? v : mode === 'text' ? k : 0.5*v + 0.5*k;
+      const rr = 0.5*base + 0.5*coverage(q, c);
+      return {i, text:c, v, k, base, rr};
+    }).sort((a,b) => b.base - a.base);
+    rows.forEach((r,idx) => r.baseRank = idx);
+    const top = rows.slice(0, N);
+    if(rerank) top.sort((a,b) => b.rr - a.rr);
+    window._top = top;
+
+    const bar = (val, col) => `<div class="bar"><div style="width:${Math.round(val*100)}%;background:var(${col})"></div></div>`;
+    const list = rerank ? top.concat(rows.slice(N)) : rows;
+    $('results').innerHTML = list.map((r,idx) => {
+      const sel = idx < N, mv = rerank && sel ? r.baseRank - idx : 0;
+      const arrow = mv ? `<span class="move" style="color:var(${mv>0?'--teal':'--rose'})">${mv>0?'▲':'▼'}${Math.abs(mv)}</span>` : '';
+      return `<div class="row ${sel?'':'cut'}"><div class="rank">${sel?idx+1:'–'}</div>
+        <div><b>Chunk ${r.i+1}</b>${arrow} ${sel?'':'<span class="sc">(not sent to the LLM)</span>'}<br>${esc(r.text)}</div>
+        <div class="scores"><span class="sc">Vector ${r.v.toFixed(2)}</span>${bar(r.v,'--teal')}
+        <span class="sc">Text ${r.k.toFixed(2)}</span>${bar(r.k,'--amber')}
+        <span class="sc">${rerank?'Reranked':'Final'} ${(rerank?r.rr:r.base).toFixed(2)}</span>${bar(rerank?r.rr:r.base,'--blue')}</div></div>`;
+    }).join('');
+
+    later(900, () => {
+      step(5);
+      const ctx = top.map((r,j) => `[Chunk ${r.i+1}] ${r.text}`).join('\n');
+      const prompt = `SYSTEM: Answer using ONLY the context below. If the answer is not in the context, say you do not know.\n\nCONTEXT:\n${ctx}\n\nQUESTION: ${q}\n\nANSWER:`;
+      $('prompt').textContent = prompt;
+
+      later(700, () => {
+        const sents = [];
+        top.forEach(r => r.text.split(/(?<=[.!?])\s+/).forEach(s => sents.push({s, c:r.i+1, sc:coverage(q, s)})));
+        sents.sort((a,b) => b.sc - a.sc);
+        const best = sents.filter(x => x.sc >= 0.25 && x.sc >= sents[0].sc * 0.6).slice(0,2);
+        const a = $('answer');
+        a.innerHTML = best.length
+          ? `<b>Answer (simulated LLM)</b><br>${best.map(x => esc(x.s) + ` <span class="sc">[Chunk ${x.c}]</span>`).join(' ')}`
+          : `<b>Answer (simulated LLM)</b><br>I do not know based on the provided context. Try a different search type or a larger Top N.`;
+        a.classList.remove('hidden');
+        step(5, 'end');
+      });
+    });
+  });
+}
+
+['cs','ov'].forEach(id => $(id).addEventListener('input', index));
+$('kb').addEventListener('input', index);
+$('n').addEventListener('input', () => $('nV').textContent = $('n').value);
+$('run').addEventListener('click', run);
+$('q').addEventListener('keydown', e => { if(e.key === 'Enter') run(); });
+index();
+</script>
+</body>
+</html>
