@@ -1,0 +1,68 @@
+RAG simulator
+Edit the knowledge base, ask a question, and watch each step of retrieval-augmented generation run. Embeddings and the answer are simulated in your browser, so no AI model or internet is needed.
+
+1. Chunk
+Split the data
+2. Embed
+Text to vectors
+3. Query
+Embed the question
+4. Retrieve
+Search and rerank
+5. Generate
+Augmented prompt
+Step 1: Chunk the data Indexing
+An LLM cannot read your whole database at once, so the text is cut into small chunks. Small chunks are precise but lose context. Large chunks keep context but add noise.
+
+Returns: You can return any unused item within 30 days of delivery. Refunds go back to your original payment method within 5 business days after we receive the item.
+Shipping: Standard delivery takes 3 to 5 business days. Express shipping takes 1 to 2 business days and costs 12 dollars. Orders over 50 dollars ship free.
+Support: Our support team is available Monday to Friday, 9am to 6pm Eastern. You can reach us by chat or email, and we reply within 24 hours.
+Warranty: All electronics include a one year warranty that covers manufacturing defects. Damage from drops or water is not covered.
+Account: To reset your password, click Forgot password on the login page. A reset link is emailed to you and expires after 1 hour.
+Chunk size: 25 words
+Overlap: 5 words
+Step 2: Create vector embeddings Indexing
+Each chunk becomes a list of numbers (a vector) that captures its meaning. Similar meanings give similar vectors. Real models use hundreds of numbers. This demo uses 32, shown as bars.
+
+Chunk 1
+Returns: You can return any unused item within 30 days of delivery. Refunds go back to your original payment method within 5 business days after
+
+Chunk 2
+within 5 business days after we receive the item. Shipping: Standard delivery takes 3 to 5 business days. Express shipping takes 1 to 2 business
+
+Chunk 3
+takes 1 to 2 business days and costs 12 dollars. Orders over 50 dollars ship free. Support: Our support team is available Monday to Friday,
+
+Chunk 4
+is available Monday to Friday, 9am to 6pm Eastern. You can reach us by chat or email, and we reply within 24 hours. Warranty: All
+
+Chunk 5
+within 24 hours. Warranty: All electronics include a one year warranty that covers manufacturing defects. Damage from drops or water is not covered. Account: To
+
+Chunk 6
+is not covered. Account: To reset your password, click Forgot password on the login page. A reset link is emailed to you and expires after
+
+Chunk 7
+to you and expires after 1 hour.
+
+7 chunks, each stored as a 32-number vector. Green bars are positive values, red are negative.
+
+Step 3: Ask a question Querying
+Your question is embedded with the same method, so it can be compared with the chunks.
+
+How long do I have to return an item and get my money back?
+Run RAG
+Step 4: Retrieve the top matches Querying
+Vector search finds chunks with similar meaning. Text (keyword) search finds exact word matches. Hybrid search blends both. Reranking then re-scores the top results.
+
+Search type 
+Hybrid (vector + text)
+Top N chunks: 3
+Reranking 
+Off
+Press Run RAG to see results.
+
+Step 5: Augmented prompt and answer Querying
+The retrieved chunks are added to your question with instructions. The LLM answers only from that context, which reduces made-up answers.
+
+Press Run RAG to build the prompt.
